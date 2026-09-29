@@ -1,23 +1,51 @@
 -- ==========================================
--- SCRIPT TẠO TOÀN BỘ CẤU TRÚC HFK (ĐÃ TỐI ƯU THỨ TỰ FOLDER -> TỆP)
+-- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (TỐI GIẢN)
 -- ==========================================
 
--- BƯỚC 1: Tạo các thư mục trước
+-- BƯỚC 1: Tạo thư mục
 makefolder("HFK")
 makefolder("HFK/id check")
 makefolder("HFK/id check/id game")
 makefolder("HFK/id trùng")
 
--- BƯỚC 2: Tạo các tệp nằm trong thư mục gốc HFK sau khi folder đã sẵn sàng
+-- BƯỚC 2: Tạo các tệp gốc
 writefile("HFK/auto kích hoạt nếu đã có", "")
 writefile("HFK/kiểm tra đã có đủ tệp chưa", "")
 writefile("HFK/nếu không có id hợp lệ trong folder check id", "")
 writefile("HFK/Ok", "")
 
--- BƯỚC 3: Tạo các tệp nằm trong thư mục id check
+-- BƯỚC 3: Tạo các tệp con
 writefile("HFK/id check/nếu id trùng hoặc không", "")
-
--- bước 2: Tạo các tệp nằm trong thư mục id trùng
 writefile("HFK/id trùng/code game id", "")
------
 
+-- BƯỚC 4: Bơm code gọn nhẹ và chạy
+task.spawn(function()
+    task.wait(0.2)
+    
+    -- Nạp code vào tệp kiểm tra rỗng / gọi link Raw Trung gian
+    writefile("HFK/nếu không có id hợp lệ trong folder check id", [[
+        if isfile("HFK/Ok") then
+            local nextFile = "HFK/id check/nếu id trùng hoặc không"
+            if isfile(nextFile) and readfile(nextFile) ~= "" then
+                loadstring(readfile(nextFile))()
+            else
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian"))()
+            end
+        else
+            warn("Thiếu tệp Ok! Chưa được kích hoạt.")
+        end
+    ]])
+
+    -- Nạp code điều phối ID game
+    writefile("HFK/id check/nếu id trùng hoặc không", [[
+        local id = tostring(game.GameId)
+        local checkFile = "HFK/id check/id game/" .. id
+        local targetFile = "HFK/id trùng/" .. id
+
+        if isfile(checkFile) and isfile(targetFile) and readfile(targetFile) ~= "" then
+            loadstring(readfile(targetFile))()
+        else
+            print("Game không nằm trong danh sách hỗ trợ.")
+        end
+    ]])
+end)
