@@ -1,44 +1,43 @@
 -- ==========================================
--- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (ĐÃ SỬA LỖI LINK)
+-- SCRIPT KHỞI TẠO HFK (TỰ ĐỘNG TẠO FOLDER & TỆP CHUẨN XÁC)
 -- ==========================================
 
--- BƯỚC 1: Tạo thư mục
+-- 1. Tạo các cấp thư mục theo đúng phân cấp
 makefolder("HFK")
 makefolder("HFK/id check")
 makefolder("HFK/id check/id game")
 makefolder("HFK/id trùng")
 
--- BƯỚC 2: Tạo các tệp gốc
-writefile("HFK/auto kích hoạt nếu đã có", "")
-writefile("HFK/kiểm tra đã có đủ tệp chưa", "")
-writefile("HFK/nếu không có id hợp lệ trong folder check id", "")
-writefile("HFK/Ok", "")
+-- 2. Hàm hỗ trợ tạo tệp an toàn (nếu chưa có thì mới tạo)
+local function createSafeFile(path, content)
+    if not isfile(path) then
+        writefile(path, content or "")
+    end
+end
 
--- BƯỚC 3: Tạo các tệp con
-writefile("HFK/id check/nếu id trùng hoặc không", "")
-writefile("HFK/id trùng/code game id", "")
+-- 3. Tạo các tệp gốc quan trọng trong thư mục HFK
+createSafeFile("HFK/Ok", "")
+createSafeFile("HFK/auto kích hoạt nếu đã có", "")
+createSafeFile("HFK/kiểm tra đã có đủ tệp chưa", "")
+createSafeFile("HFK/nếu không có id hợp lệ trong folder check id", "")
 
--- BƯỚC 4: Cơ chế chờ (delay) an toàn rồi mới kích hoạt link Trung gian
+-- 4. Tạo tệp con trong các thư mục check ID
+createSafeFile("HFK/id check/nếu id trùng hoặc không", "")
+createSafeFile("HFK/id trùng/code game id", "")
+
+-- 5. Chờ một nhịp an toàn rồi gọi tiếp link Trung gian
 task.spawn(function()
-    -- Chờ 0.5 giây để đảm bảo hệ thống tệp ghi xong hoàn toàn
-    task.wait(0.5) 
+    task.wait(0.5)
     
     local okFilePath = "HFK/Ok"
-    -- Đã gán sẵn link vào biến cho gọn gàng, tránh gõ nhầm
     local trungGianLink = "https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian"
 
     if isfile(okFilePath) then
-        print("[HFK System] Khung đã tạo xong, có tệp Ok! Đang gọi Trung gian...")
+        print("[HFK System] Đã tạo xong khung và tệp Ok! Đang gọi Trung gian...")
         pcall(function()
-            -- Đã thêm dấu nháy kép chuẩn chỉnh ở đây
             loadstring(game:HttpGet(trungGianLink))()
         end)
     else
-        warn("Lỗi: Không tìm thấy tệp Ok! Hãy kiểm tra lại thư mục HFK.")
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "HFK System",
-            Text = "Tìm thằng Minh hỏi! Thiếu tệp Ok kìa.",
-            Duration = 5
-        })
+        warn("[HFK System] Lỗi: Không tìm thấy tệp Ok!")
     end
 end)
