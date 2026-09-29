@@ -1,0 +1,23 @@
+-- ==========================================
+-- SCRIPT TẠO TOÀN BỘ CẤU TRÚC HFK (ĐÃ TỐI ƯU THỨ TỰ FOLDER -> TỆP)
+-- ==========================================
+
+-- BƯỚC 1: Tạo các thư mục trước
+makefolder("HFK")
+makefolder("HFK/id check")
+makefolder("HFK/id check/id game")
+makefolder("HFK/id trùng")
+
+-- BƯỚC 2: Tạo các tệp nằm trong thư mục gốc HFK sau khi folder đã sẵn sàng
+writefile("HFK/auto kích hoạt nếu đã có", "")
+writefile("HFK/kiểm tra đã có đủ tệp chưa", "")
+writefile("HFK/nếu không có id hợp lệ trong folder check id", "")
+writefile("HFK/Ok", "")
+
+-- BƯỚC 3: Tạo các tệp nằm trong thư mục id check
+writefile("HFK/id check/nếu id trùng hoặc không", "")
+
+-- bước 2: Tạo các tệp nằm trong thư mục id trùng
+writefile("HFK/id trùng/code game id", "")
+-----
+
