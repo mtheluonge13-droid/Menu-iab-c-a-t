@@ -1,0 +1,59 @@
+-- ==========================================
+-- HÀM TỰ ĐỘNG TẠO TỆP THEO TÊN ID VÀ KÍCH HOẠT
+-- ==========================================
+
+local function setupAndRunGame(targetId, scriptContent)
+    local idStr = tostring(targetId)
+    
+    -- Đường dẫn 2 thư mục
+    local folderIdGame = "HFK/id check/id game/"
+    local folderIdTrung = "HFK/id trùng/"
+    
+    -- Đảm bảo thư mục tồn tại
+    makefolder(folderIdGame)
+    makefolder(folderIdTrung)
+    
+    local pathCheckGame = folderIdGame .. idStr
+    local pathTrungScript = folderIdTrung .. idStr
+    
+    -- BƯỚC 1: Tự động tạo tệp trong thư mục "id game" nếu chưa có
+    if not isfile(pathCheckGame) then
+        writefile(pathCheckGame, "")
+        print("[HFK System] Đã tự tạo tệp check cho ID: " .. idStr)
+    end
+    
+    -- BƯỚC 2: Tự động tạo tệp chứa script trong thư mục "id trùng"
+    if not isfile(pathTrungScript) then
+        writefile(pathTrungScript, scriptContent or "")
+        print("[HFK System] Đã tự tạo tệp script cho ID: " .. idStr)
+    end
+    
+    -- BƯỚC 3: Kiểm tra và kích hoạt nếu trùng với game hiện tại
+    if tostring(game.GameId) == idStr then
+        local codeToRun = readfile(pathTrungScript)
+        if codeToRun and codeToRun ~= "" then
+            print("[HFK System] Khớp ID game hiện tại! Đang kích hoạt...")
+            pcall(function()
+                loadstring(codeToRun)()
+            end)
+        else
+            warn("[HFK System] Tệp script cho ID này đang trống!")
+        end
+    end
+end
+
+-- ==========================================
+-- CÁCH SỬ DỤNG: Chỉ cần gọi hàm và điền ID + Script của bạn vào đây
+-- ==========================================
+
+-- Ví dụ thêm game số 1:
+setupAndRunGame("7627873", [[
+    print("Đang chạy script cho game 7627873!")
+    -- Viết code hoặc công tắc của bạn ở đây
+]])
+
+-- Ví dụ thêm game số 2:
+setupAndRunGame("8726378", [[
+    print("Đang chạy script cho game 8726378!")
+    -- Viết code hoặc công tắc của bạn ở đây
+]])
