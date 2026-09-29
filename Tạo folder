@@ -29,7 +29,7 @@ task.spawn(function()
     if isfile(okFilePath) then
         print("[HFK System] Khung đã tạo xong, có tệp Ok! Đang gọi Trung gian...")
         pcall(function()
-            loadstring(game:HttpGet(trungGianLink))()
+            loadstring(game:HttpGet(https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian))()
         end)
     else
         warn("Lỗi: Không tìm thấy tệp Ok! Hãy kiểm tra lại thư mục HFK.")
