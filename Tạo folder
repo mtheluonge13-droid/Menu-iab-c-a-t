@@ -1,5 +1,5 @@
 -- ==========================================
--- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (TỐI GIẢN)
+-- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (SIÊU TỐI GIẢN)
 -- ==========================================
 
 -- BƯỚC 1: Tạo thư mục
@@ -18,34 +18,24 @@ writefile("HFK/Ok", "")
 writefile("HFK/id check/nếu id trùng hoặc không", "")
 writefile("HFK/id trùng/code game id", "")
 
--- BƯỚC 4: Bơm code gọn nhẹ và chạy
+-- BƯỚC 4: Kiểm tra tệp Ok và kích hoạt ngay link Trung gian
 task.spawn(function()
     task.wait(0.2)
     
-    -- Nạp code vào tệp kiểm tra rỗng / gọi link Raw Trung gian
-    writefile("HFK/nếu không có id hợp lệ trong folder check id", [[
-        if isfile("HFK/Ok") then
-            local nextFile = "HFK/id check/nếu id trùng hoặc không"
-            if isfile(nextFile) and readfile(nextFile) ~= "" then
-                loadstring(readfile(nextFile))()
-            else
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian"))()
-            end
-        else
-            warn("Thiếu tệp Ok! Chưa được kích hoạt.")
-        end
-    ]])
+    local okFilePath = "HFK/Ok"
+    local trungGianLink = "https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian"
 
-    -- Nạp code điều phối ID game
-    writefile("HFK/id check/nếu id trùng hoặc không", [[
-        local id = tostring(game.GameId)
-        local checkFile = "HFK/id check/id game/" .. id
-        local targetFile = "HFK/id trùng/" .. id
-
-        if isfile(checkFile) and isfile(targetFile) and readfile(targetFile) ~= "" then
-            loadstring(readfile(targetFile))()
-        else
-            print("Game không nằm trong danh sách hỗ trợ.")
-        end
-    ]])
+    if isfile(okFilePath) then
+        print("[HFK System] Đã có tệp Ok! Đang kích hoạt Trung gian...")
+        pcall(function()
+            loadstring(game:HttpGet(trungGianLink))()
+        end)
+    else
+        warn("Lỗi: Không tìm thấy tệp Ok! Hãy kiểm tra lại thư mục HFK.")
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "HFK System",
+            Text = "Tìm thằng Minh hỏi! Thiếu tệp Ok kìa.",
+            Duration = 5
+        })
+    end
 end)
