@@ -1,57 +1,65 @@
-task.wait(1)
+-- ==========================================
+-- CODE KIỂM TRA VÀ ĐIỀU PHỐI ID GAME
+-- ==========================================
+
+task.wait(0.5)
 
 local currentId = tostring(game.GameId)
+
+-- Các đường dẫn thư mục và tệp
 local idGameFolderPath = "HFK/id check/id game"
 local idTrungFolderPath = "HFK/id trùng"
-local invalidIdFilePath = "HFK/nếu không có id hợp lệ trong folder check id"
+local invalidHandlerFile = "HFK/nếu không có id hợp lệ trong folder check id"
 
--- Đường dẫn tệp ID trong thư mục id game (để check sự tồn tại)
-local checkIdFilePath = idGameFolderPath .. "/" .. currentId
--- Đường dẫn tệp thực thi thực tế nằm trong thư mục id trùng
-local targetIdFilePath = idTrungFolderPath .. "/" .. currentId
+-- Đường dẫn tệp kiểm tra trong folder "id game"
+local checkFileInIdGame = idGameFolderPath .. "/" .. currentId
+-- Đường dẫn tệp thực thi trong folder "id trùng"
+local targetFileInIdTrung = idTrungFolderPath .. "/" .. currentId
 
--- BƯỚC 1: Kiểm tra xem trong folder "id game" có tồn tại tệp mang số ID này không
-if isfile(checkIdFilePath) or isfile(targetIdFilePath) then
-    -- TRƯỜNG HỢP TRÙNG ID
-    print("ID này trùng: " .. currentId)
+print("[HFK System] Đang check ID game hiện tại: " .. currentId)
+
+-- BƯỚC 1: Kiểm tra xem trong folder "id game" có tệp mang tên số ID này hay không
+if isfile(checkFileInIdGame) then
+    -- TRƯỜNG HỢP TRÙNG ID TRONG FOLDER CHECK
+    print("[HFK System] ID khớp! Đang tìm tệp trong thư mục 'id trùng'...")
     
     local status, err = pcall(function()
-        if isfile(targetIdFilePath) then
-            local codeContent = readfile(targetIdFilePath)
+        if isfile(targetFileInIdTrung) then
+            local codeContent = readfile(targetFileInIdTrung)
             if codeContent and codeContent ~= "" then
-                -- Kích hoạt code bên trong tệp mang tên số ID đó luôn
+                print("[HFK System] Đã tìm thấy tệp ID. Đang kích hoạt code bên trong...")
                 loadstring(codeContent)()
             else
-                warn("Tệp ID trùng đang trống nội dung!")
+                warn("[HFK System] Tệp ID trong thư mục 'id trùng' đang trống nội dung!")
             end
         else
-            warn("Tìm thấy dấu vết ID nhưng không thấy tệp trong thư mục id trùng!")
+            warn("[HFK System] Có tệp check ID nhưng không tìm thấy tệp tương ứng trong thư mục 'id trùng'!")
         end
     end)
     
     if not status then
-        warn("Lỗi khi thực thi code ID trùng: " .. tostring(err))
+        warn("[HFK System] Lỗi thực thi tệp ID trùng: " .. tostring(err))
     end
 
 else
-    -- TRƯỜNG HỢP KHÔNG TRÙNG ID
-    print("ID không trùng. Đang chuyển sang kích hoạt tệp dự phòng...")
+    -- TRƯỜNG HỢP KHÔNG TRÙNG / KHÔNG CÓ TỆP ID TRONG FOLDER CHECK
+    print("[HFK System] Không hỗ trợ game này (ID không tồn tại trong hệ thống check).")
     
     local statusFail, errFail = pcall(function()
-        if isfile(invalidIdFilePath) then
-            local failCode = readfile(invalidIdFilePath)
+        if isfile(invalidHandlerFile) then
+            local failCode = readfile(invalidHandlerFile)
             if failCode and failCode ~= "" then
-                -- Kích hoạt code trong tệp "nếu không có id hợp lệ trong folder check id"
+                print("[HFK System] Đang chuyển hướng sang tệp nhận thông tin / xử lý lỗi...")
                 loadstring(failCode)()
             else
-                warn("Tệp 'nếu không có id hợp lệ trong folder check id' đang trống!")
+                warn("[HFK System] Tệp xử lý không hợp lệ đang trống!")
             end
         else
-            warn("Không tìm thấy tệp xử lý khi ID không hợp lệ!")
+            warn("[HFK System] Không tìm thấy tệp xử lý khi không có ID hợp lệ!")
         end
     end)
     
     if not statusFail then
-        warn("Lỗi ở nhánh không trùng ID: " .. tostring(errFail))
+        warn("[HFK System] Lỗi ở nhánh không hỗ trợ: " .. tostring(errFail))
     end
 end
