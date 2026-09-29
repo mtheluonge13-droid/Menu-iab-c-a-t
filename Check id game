@@ -1,0 +1,57 @@
+task.wait(1)
+
+local currentId = tostring(game.GameId)
+local idGameFolderPath = "HFK/id check/id game"
+local idTrungFolderPath = "HFK/id trùng"
+local invalidIdFilePath = "HFK/nếu không có id hợp lệ trong folder check id"
+
+-- Đường dẫn tệp ID trong thư mục id game (để check sự tồn tại)
+local checkIdFilePath = idGameFolderPath .. "/" .. currentId
+-- Đường dẫn tệp thực thi thực tế nằm trong thư mục id trùng
+local targetIdFilePath = idTrungFolderPath .. "/" .. currentId
+
+-- BƯỚC 1: Kiểm tra xem trong folder "id game" có tồn tại tệp mang số ID này không
+if isfile(checkIdFilePath) or isfile(targetIdFilePath) then
+    -- TRƯỜNG HỢP TRÙNG ID
+    print("ID này trùng: " .. currentId)
+    
+    local status, err = pcall(function()
+        if isfile(targetIdFilePath) then
+            local codeContent = readfile(targetIdFilePath)
+            if codeContent and codeContent ~= "" then
+                -- Kích hoạt code bên trong tệp mang tên số ID đó luôn
+                loadstring(codeContent)()
+            else
+                warn("Tệp ID trùng đang trống nội dung!")
+            end
+        else
+            warn("Tìm thấy dấu vết ID nhưng không thấy tệp trong thư mục id trùng!")
+        end
+    end)
+    
+    if not status then
+        warn("Lỗi khi thực thi code ID trùng: " .. tostring(err))
+    end
+
+else
+    -- TRƯỜNG HỢP KHÔNG TRÙNG ID
+    print("ID không trùng. Đang chuyển sang kích hoạt tệp dự phòng...")
+    
+    local statusFail, errFail = pcall(function()
+        if isfile(invalidIdFilePath) then
+            local failCode = readfile(invalidIdFilePath)
+            if failCode and failCode ~= "" then
+                -- Kích hoạt code trong tệp "nếu không có id hợp lệ trong folder check id"
+                loadstring(failCode)()
+            else
+                warn("Tệp 'nếu không có id hợp lệ trong folder check id' đang trống!")
+            end
+        else
+            warn("Không tìm thấy tệp xử lý khi ID không hợp lệ!")
+        end
+    end)
+    
+    if not statusFail then
+        warn("Lỗi ở nhánh không trùng ID: " .. tostring(errFail))
+    end
+end
