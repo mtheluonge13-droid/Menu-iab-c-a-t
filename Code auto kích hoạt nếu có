@@ -1,0 +1,23 @@
+-- ==========================================
+-- PHẦN LOGIC 1: KIỂM TRA TỆP "Ok" TỔNG
+-- ==========================================
+
+local okFilePath = "HFK/Ok"
+
+-- Kiểm tra xem tệp "Ok" có tồn tại hay không
+if isfile(okFilePath) then
+    print("Đã tìm thấy tệp Ok! Tiến hành các bước tiếp theo...")
+    
+    -- [CHỖ NÀY SẼ LÀ CODE XỬ LÝ TIẾP THEO CỦA CHÚNG TA Ở BƯỚC SAU]
+    
+else
+    -- Nếu không tìm thấy tệp Ok, in thông báo hoặc gửi UI như bạn yêu cầu
+    warn("Lỗi: Không tìm thấy tệp Ok! Hãy kiểm tra lại thư mục HFK.")
+    
+    -- (Tùy chọn) Hiện thông báo lên màn hình game hoặc console
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "HFK System",
+        Text = "Tìm thằng Minh hỏi! Thiếu tệp Ok kìa.",
+        Duration = 5
+    })
+end
