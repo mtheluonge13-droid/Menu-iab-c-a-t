@@ -1,5 +1,5 @@
 -- ==========================================
--- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (SIÊU TỐI GIẢN)
+-- SCRIPT KHỞI TẠO & KÍCH HOẠT HFK (AN TOÀN - CHỐNG BUG)
 -- ==========================================
 
 -- BƯỚC 1: Tạo thư mục
@@ -18,15 +18,16 @@ writefile("HFK/Ok", "")
 writefile("HFK/id check/nếu id trùng hoặc không", "")
 writefile("HFK/id trùng/code game id", "")
 
--- BƯỚC 4: Kiểm tra tệp Ok và kích hoạt ngay link Trung gian
+-- BƯỚC 4: Cơ chế chờ (delay) an toàn rồi mới kích hoạt link Trung gian để tránh bug
 task.spawn(function()
-    task.wait(0.2)
+    -- Chờ 0.5 giây để đảm bảo hệ thống tệp ghi xong hoàn toàn
+    task.wait(0.5) 
     
     local okFilePath = "HFK/Ok"
     local trungGianLink = "https://raw.githubusercontent.com/mtheluonge13-droid/Menu-iab-c-a-t/refs/heads/main/Trung%20gian"
 
     if isfile(okFilePath) then
-        print("[HFK System] Đã có tệp Ok! Đang kích hoạt Trung gian...")
+        print("[HFK System] Khung đã tạo xong, có tệp Ok! Đang gọi Trung gian...")
         pcall(function()
             loadstring(game:HttpGet(trungGianLink))()
         end)
